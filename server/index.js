@@ -1,18 +1,15 @@
 const express = require('express');
+const fs = require('fs');
 const app = express();
 
 // Middleware to parse JSON body
 app.use(express.json());
 
-// Mock weather data
-const weatherData = {
-  "New York": { temperature: 25, condition: "Sunny" },
-  "London": { temperature: 15, condition: "Cloudy" },
-  "Tokyo": { temperature: 30, condition: "Rainy" }
-};
+// Path to the weather data JSON file
+const weatherDataFile = 'weather.json';
 
 // Dummy API key (replace with your actual API key)
-const apiKey = "super_secret_key";
+const apiKey = "your_api_key_here";
 
 // Middleware to check API key
 function checkApiKey(req, res, next) {
@@ -25,12 +22,41 @@ function checkApiKey(req, res, next) {
 
 // Endpoint to get weather data
 app.get('/weather', checkApiKey, (req, res) => {
-  const city = req.query.city;
-  if (!city || !weatherData[city]) {
-    return res.status(404).json({ error: "City not found" });
+  fs.readFile(weatherDataFile, (err, data) => {
+    if (err) {
+      console.error('Error reading weather data file:', err);
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
+    const weatherData = JSON.parse(data);
+    const city = req.query.city;
+    if (!city || !weatherData[city]) {
+      return res.status(404).json({ error: 'City not found' });
+    }
+    res.json({ city, ...weatherData[city] });
+  });
+});
+
+// Endpoint to append new weather data
+app.post('/weather', checkApiKey, (req, res) => {
+  const { city, temperature, condition } = req.body;
+  if (!city || !temperature || !condition) {
+    return res.status(400).json({ error: 'City, temperature, and condition are required' });
   }
-  const { temperature, condition } = weatherData[city];
-  res.json({ city, temperature, condition });
+  fs.readFile(weatherDataFile, (err, data) => {
+    if (err) {
+      console.error('Error reading weather data file:', err);
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
+    const weatherData = JSON.parse(data);
+    weatherData[city] = { temperature, condition };
+    fs.writeFile(weatherDataFile, JSON.stringify(weatherData, null, 2), (err) => {
+      if (err) {
+        console.error('Error writing weather data file:', err);
+        return res.status(500).json({ error: 'Internal Server Error' });
+      }
+      res.json({ message: 'Weather data updated successfully', city, temperature, condition });
+    });
+  });
 });
 
 // Start the server
