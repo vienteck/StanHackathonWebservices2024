@@ -36,6 +36,35 @@ app.get('/weather', checkApiKey, (req, res) => {
   });
 });
 
+
+app.delete('/weather', checkApiKey, (req, res) => {
+  fs.readFile(weatherDataFile, (err, data) => {
+    if (err) {
+      console.error('Error reading weather data file:', err);
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
+
+    const weatherData = JSON.parse(data);
+    const {city} = req.body;
+
+    console.log(weatherData);
+
+    if (!city || !weatherData[city]) {
+      return res.status(404).json({ error: 'City not found' });
+    }else {
+      console.log('deleting city ' + city)
+      delete weatherData[city]
+      fs.writeFile(weatherDataFile, JSON.stringify(weatherData, null, 2), (err) => {
+        if (err) {
+          console.error('Error writing file');
+          return res.status(500).json({error: 'Internal Server Error'})
+        }
+      })
+      return res.json('City Deleted')
+    }
+  });
+});
+
 // Endpoint to append new weather data
 app.post('/weather', checkApiKey, (req, res) => {
   const { city, temperature, condition } = req.body;

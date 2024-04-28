@@ -1,6 +1,27 @@
 {
-    "New York": { "temperature": 25, "condition": "Sunny" },
-    "London": { "temperature": 15, "condition": "Cloudy" },
-    "Tokyo": { "temperature": 30, "condition": "Rainy" }
+  "New York": {
+    "temperature": 25,
+    "condition": "Sunny"
+    "newVariable": true
+  },
+  "London": {
+    "temperature": 15,
+    "condition": "Cloudy"
+  },
+  "Tokyo": {
+    "temperature": 30,
+    "condition": "Rainy"
+  },
+  "Paris": {
+    "temperature": 20,
+    "condition": "Partly Cloudy"
+  },
+  "Los Banos": {
+    "temperature": 29,
+    "condition": "Cloudy"
+  },
+  "turlock": {
+    "temperature": 20,
+    "condition": "Sunny"
   }
-  
+}

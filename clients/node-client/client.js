@@ -1,12 +1,13 @@
 const http = require('http');
 const url = require('url');
+const axios = require('axios')
 
 // Define the URL of the weather service
 const baseURL = 'http://localhost:3000/weather';
 
 // Define the parameters (city and API key)
 const params = new URLSearchParams({
-  city: 'New York', // Change the city name as needed
+  city: 'Paris', // Change the city name as needed
   apiKey: 'your_api_key_here' // Replace with your actual API key
 });
 
@@ -30,3 +31,19 @@ http.get(weatherURL, (res) => {
 }).on('error', (err) => {
   console.error('Error making request:', err);
 });
+
+
+const newWeather = {
+  city: 'Los Banos',
+  temperature: 29,
+  condition: 'Cloudy'
+}
+
+// // Make a POST request to the weather service
+// axios.post(`${baseURL}?apiKey=your_api_key_here`, newWeather)
+//   .then(response => {
+//     console.log('Weather data appended successfully:', response.data);
+//   })
+//   .catch(error => {
+//     console.error('Error appending weather data:', error.response.data);
+//   });
